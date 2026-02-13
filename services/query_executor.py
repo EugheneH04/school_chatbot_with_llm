@@ -34,11 +34,13 @@ class QueryExecutor:
         """
         try:
             filtered_df = self.df.copy()
+            print(f"Initial DataFrame shape: {filtered_df.shape}")
             
             # Step 1: Apply filters
             filtered_df = self._apply_filters(filtered_df, structured_query.get("filters"))
             
             if filtered_df.empty:
+                print("Filtered DataFrame is empty. Returning None.")
                 return None
             
             query_type = structured_query.get("query_type", "aggregate")
@@ -91,6 +93,8 @@ class QueryExecutor:
             elif op == "<=":
                 df = df[df[col] <= val]
         
+        print(f"  Shape after filter: {df.shape}")
+        
         return df
     
     def _execute_list_query(
@@ -103,6 +107,7 @@ class QueryExecutor:
         
         # Validate and select columns
         if select_columns:
+            print(f"  Selecting columns: {select_columns}")
             for col in select_columns:
                 if not validator.validate_column(col, self.df.columns.tolist()):
                     raise ValueError(f"Invalid column: {col}")
@@ -115,14 +120,17 @@ class QueryExecutor:
         if sort_spec:
             sort_col = sort_spec["column"]
             ascending = sort_spec.get("ascending", True)
+            print(f"  Sorting by: {sort_col}, ascending: {ascending}")
             if sort_col in result_df.columns:
                 result_df = result_df.sort_values(by=sort_col, ascending=ascending)
         
         # Limit
         limit = query.get("limit", settings.DEFAULT_LIST_LIMIT)
         if limit:
+            print(f"  Applying limit: {limit}")
             result_df = result_df.head(limit)
         
+        print(f"  List query result DF head:\n{result_df.head()}")
         return result_df.to_dict(orient='records')
     
     def _execute_aggregate_query(
@@ -135,6 +143,7 @@ class QueryExecutor:
         
         # Group if needed
         if group_by_cols:
+            print(f"  Grouping by: {group_by_cols}")
             for col in group_by_cols:
                 if not validator.validate_column(col, self.df.columns.tolist()):
                     raise ValueError(f"Invalid group_by column: {col}")
@@ -153,6 +162,7 @@ class QueryExecutor:
             func = agg_spec["function"]
             col = agg_spec["column"]
             alias = agg_spec.get("alias", f"{func}_{col}")
+            print(f"  Applying aggregation: {func} on {col} as {alias}")
             
             # Security: Validate
             if not validator.validate_aggregation(func):
@@ -175,8 +185,10 @@ class QueryExecutor:
         # Limit
         limit = query.get("limit")
         if limit:
+            print(f"  Applying limit: {limit}")
             result_df = result_df.head(limit)
         
+        print(f"  Aggregate query result DF:\n{result_df}")
         # Convert to output
         return self._format_result(result_df)
     
