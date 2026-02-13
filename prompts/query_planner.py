@@ -27,6 +27,7 @@ CRITICAL RULES:
    - "list" → When user wants to SEE students/records ("show me", "list", "who are", "which students")
    - "aggregate" → When user wants statistics ("how many", "average", "total", "count")
    - "clarification" → When user's query is ambiguous and requires more information to proceed (e.g., multiple students with the same name).
+     - **CRITICAL**: If the user's question is ambiguous, confusing, incomplete, or requires more details to formulate a precise query (e.g., missing class for a subject score query, or unclear intent), you MUST use the "clarification" query_type. Do NOT make assumptions.
      - When using "clarification", the JSON should include:
        - "question": "A clarifying question to ask the user."
        - "options": An array of dictionaries, each representing a distinct option for disambiguation. Each option should include enough details to distinguish it (e.g., Full_Name, Class, Section).
@@ -138,8 +139,7 @@ Q: "who has the highest score in class 8 in science?"
   "group_by": null,
   "aggregations": null,
   "select_columns": ["Full_Name", "Class", "Science_Marks"],
-  "sort_by": {"column": "Science_Marks", "ascending": false},
-  "limit": 1
+  "sort_by": {"column": "Science_Marks", "ascending": false}
 }
 
 Q: "Who is John Doe?" (Assuming multiple John Does exist in the data)
@@ -150,6 +150,13 @@ Q: "Who is John Doe?" (Assuming multiple John Does exist in the data)
     {"Full_Name": "John Doe", "Class": 8, "Section": "A"},
     {"Full_Name": "John Doe", "Class": 9, "Section": "B"}
   ]
+}
+
+Q: "Who got highest marks?"
+{
+  "query_type": "clarification",
+  "question": "For which subject or class are you asking about the highest marks?",
+  "options": []
 }
 
 Available columns: Student_ID, Full_Name, Gender, Class, Section, Math_Marks, Science_Marks, English_Marks, Social_Marks, Computer_Marks, Attendance_Percentage, Fee_Paid

@@ -124,10 +124,23 @@ class QueryExecutor:
             if sort_col in result_df.columns:
                 result_df = result_df.sort_values(by=sort_col, ascending=ascending)
         
-        # Limit
-        limit = query.get("limit", settings.DEFAULT_LIST_LIMIT)
-        if limit:
-            print(f"  Applying limit: {limit}")
+        # Handle "highest" or "lowest" queries to include all ties
+        limit = query.get("limit")
+        if sort_spec and limit is not None and limit >= 1: # Only if sort_by and limit are present
+            if len(result_df) > 0: # Ensure there are results to process
+                # Get the value at the limit boundary
+                # E.g., if limit is 1, get the highest score. If limit is 5, get the 5th highest score.
+                cutoff_index = min(limit - 1, len(result_df) - 1)
+                cutoff_value = result_df.iloc[cutoff_index][sort_col]
+                
+                # Filter to include all rows that have value equal to or better than the cutoff
+                if ascending: # For "lowest" queries (ascending order)
+                    result_df = result_df[result_df[sort_col] <= cutoff_value]
+                else: # For "highest" queries (descending order)
+                    result_df = result_df[result_df[sort_col] >= cutoff_value]
+        
+        # If no sort_by, or no specific limit handling, apply limit directly (or re-apply if it was adjusted)
+        elif limit:
             result_df = result_df.head(limit)
         
         print(f"  List query result DF head:\n{result_df.head()}")
