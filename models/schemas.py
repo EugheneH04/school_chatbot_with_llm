@@ -19,8 +19,8 @@ class QuestionRequest(BaseModel):
 class QuestionResponse(BaseModel):
     """Response model for question answers"""
     response: str
-    structured_query: Dict[str, Any]
-    raw_result: Any
+    structured_query: Optional[Dict[str, Any]]=None
+    raw_result: Optional[Any]=None
     
     class Config:
         json_schema_extra = {

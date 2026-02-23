@@ -64,6 +64,21 @@ async def ask_question(request: QuestionRequest):
         QuestionResponse with natural language answer and debug info
     """
     print(f"Question: {request.question}")
+
+    # NEW STEP: Classify question type
+    question_type = llm_service.classify_question(request.question)
+
+    if question_type == "chat":
+        chat_response = await llm_service.generate_chat_response(
+            request.question
+        )
+
+        return QuestionResponse(
+            response=chat_response,
+            structured_query=None,
+            raw_result=None
+        )
+
     
     # Pre-step: Check for ambiguous names directly from the data
     potential_name = extract_potential_full_name(request.question)

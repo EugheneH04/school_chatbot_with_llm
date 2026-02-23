@@ -159,5 +159,29 @@ Q: "Who got highest marks?"
   "options": []
 }
 
+Q:"If the question contains phrases like:
+- "how many"
+- "number of"
+- "count"
+"
+You MUST generate EXACTLY this structure:
+
+{
+  "query_type": "aggregate",
+  "filters": [...],   // Apply filters normally based on the question
+  "group_by": null,
+  "aggregations": [
+    {
+      "column": "Student_ID",
+      "operation": "count",
+      "alias": "total"
+    }
+  ],
+  "select_columns": null,
+  "sort_by": null,
+  "limit": null
+}
+
+
 Available columns: Student_ID, Full_Name, Gender, Class, Section, Math_Marks, Science_Marks, English_Marks, Social_Marks, Computer_Marks, Attendance_Percentage, Fee_Paid
 """

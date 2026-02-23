@@ -10,8 +10,9 @@ class Settings:
     
     # API Configuration
     OLLAMA_URL = "http://localhost:11434/api/generate"
-    OLLAMA_MODEL = "llama3.1"
-    OLLAMA_TIMEOUT = 60.0
+    OLLAMA_MODEL = "llama3.1:8b"
+    CHAT_MODEL = "qwen2.5:1.5b"         
+    OLLAMA_TIMEOUT = 10000.0
     
     # Data Configuration
     CSV_FILE_PATH = "school_system_large.csv"
@@ -21,7 +22,7 @@ class Settings:
     
     # Available columns in the dataset
     AVAILABLE_COLUMNS = [
-        "Student_ID", "Full_Name", "Gender", "Class", "Section",
+        "Student_ID", "Full_Name", "Gender", "Class", "Section", 
         "Math_Marks", "Science_Marks", "English_Marks", 
         "Social_Marks", "Computer_Marks", 
         "Attendance_Percentage", "Fee_Paid"

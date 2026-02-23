@@ -14,9 +14,11 @@ class LLMService:
     """Service for interacting with the LLM"""
     
     def __init__(self):
-        self.url = settings.OLLAMA_URL
-        self.model = settings.OLLAMA_MODEL
-        self.timeout = httpx.Timeout(settings.OLLAMA_TIMEOUT)
+         self.url = settings.OLLAMA_URL
+         self.query_model = settings.OLLAMA_MODEL
+         self.chat_model = settings.CHAT_MODEL
+         self.timeout = httpx.Timeout(settings.OLLAMA_TIMEOUT)
+
     
     async def get_structured_query(self, question: str) -> Dict[str, Any]:
         """
@@ -37,12 +39,13 @@ class LLMService:
             response = await client.post(
                 self.url,
                 json={
-                    "model": self.model,
+                    "model": self.query_model,
                     "prompt": prompt,
                     "stream": False,
-                    "format": "json"  # Force JSON output
-                },
-            )
+                    "format": "json"
+                    },
+                )
+
             data = response.json()
             
             if "response" not in data:
@@ -96,7 +99,7 @@ class LLMService:
             response = await client.post(
                 self.url,
                 json={
-                    "model": self.model,
+                    "model": self.chat_model,
                     "prompt": prompt,
                     "stream": False
                 },
@@ -127,6 +130,51 @@ class LLMService:
                 response_text = response_text[1:-1]
             
             return response_text
+        
+    async def generate_chat_response(self, question: str) -> str:
+        """
+            Handle general chat questions (non-database related).
+        """
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            response = await client.post(
+                self.url,
+                json={
+                    "model": self.chat_model,
+                    "prompt": question,
+                    "stream": False
+                },
+            )
+        data = response.json()
 
+        if "response" not in data:
+            return "Sorry, I couldn't process that."
+
+        return data["response"].strip()
+    
+    # Chosing between query and chat model based on question content
+
+    def classify_question(self, question: str) -> str:
+        data_keywords = [
+            "how many",
+            "count",
+            "number of",
+            "average",
+            "maximum",
+            "minimum",
+            "marks",
+            "students in",
+            "class",
+            "section"
+        ]
+
+        question_lower = question.lower()
+
+        for keyword in data_keywords:
+            if keyword in question_lower:
+                print("CLASSIFIED AS QUERY")
+                return "query"
+                
+        print("CLASSIFIED AS CHAT")
+        return "chat"
 # Create singleton instance
 llm_service = LLMService()
