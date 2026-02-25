@@ -19,6 +19,45 @@ class LLMService:
         #Default model form settings
          self.default_model = settings.DEFAULT_MODEL
 
+    async def classify_question(self, question: str, model_name: str = None) -> str:
+        """
+        Classify whether question is database-related or general chat.
+        Returns: 'database' or 'general'
+        """
+
+        model_to_use = model_name if model_name else self.default_model
+
+        prompt = f"""
+        You are a classifier.
+
+        If the user question is related to student data, marks, class, section, student name,
+        return ONLY this word:
+        database
+
+        If the question is casual conversation, greeting, or general knowledge,
+        return ONLY this word:
+        general
+
+        Question: {question}
+        Answer:
+        """
+
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            response = await client.post(
+                self.url,
+                json={
+                    "model": model_to_use,
+                    "prompt": prompt,
+                    "stream": False
+                }
+            )
+
+        data = response.json()
+        result = data.get("response", "").strip().lower()
+
+        if "database" in result:
+            return "database"
+        return "general"
 
 
     async def get_structured_query(self, question: str, model_name: str = None) -> Dict[str, Any]:

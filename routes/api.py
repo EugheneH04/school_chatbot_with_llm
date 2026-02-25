@@ -66,6 +66,29 @@ async def ask_question(request: QuestionRequest):
     print(f"Question: {request.question}")
     print(f"Selected Model: {request.model}")
     
+        # Step 0: Classify question
+    question_type = await llm_service.classify_question(
+        request.question,
+        model_name=request.model
+    )
+
+    print("Question Type:", question_type)
+
+    # If general chat → directly respond
+    if question_type == "general":
+        chat_response = await llm_service.generate_chat_response(
+            request.question,
+            model_name=request.model
+        )
+
+        return QuestionResponse(
+            response=chat_response,
+            structured_query=None,
+            raw_result=None
+        )
+
+    # Otherwise → database flow continues
+
     # Pre-step: Check for ambiguous names directly from the data
     potential_name = extract_potential_full_name(request.question)
     
