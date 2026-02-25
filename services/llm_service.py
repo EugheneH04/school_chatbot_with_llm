@@ -15,12 +15,13 @@ class LLMService:
     
     def __init__(self):
          self.url = settings.OLLAMA_URL
-         self.query_model = settings.OLLAMA_MODEL
-         self.chat_model = settings.CHAT_MODEL
          self.timeout = httpx.Timeout(settings.OLLAMA_TIMEOUT)
+        #Default model form settings
+         self.default_model = settings.DEFAULT_MODEL
 
-    
-    async def get_structured_query(self, question: str) -> Dict[str, Any]:
+
+
+    async def get_structured_query(self, question: str, model_name: str = None) -> Dict[str, Any]:
         """
         Convert natural language question to structured query.
         
@@ -33,13 +34,17 @@ class LLMService:
         Raises:
             Exception: If LLM response is invalid
         """
+        model_to_use = model_name if model_name else self.default_model
+
+        print("Using Model:", model_to_use)
+
         prompt = QUERY_PLANNER_PROMPT + "\nUser Question:\n" + question
         
         async with httpx.AsyncClient(timeout=self.timeout) as client:
             response = await client.post(
                 self.url,
                 json={
-                    "model": self.query_model,
+                    "model": model_to_use,
                     "prompt": prompt,
                     "stream": False,
                     "format": "json"
@@ -66,7 +71,7 @@ class LLMService:
                     return json.loads(match.group())
                 raise Exception("No valid JSON found in model output:\n" + raw_output)
     
-    async def generate_natural_response(self, question: str, result: Any) -> str:
+    async def generate_natural_response(self, question: str, result: Any, model_name: str = None) -> str:
         """
         Convert query result to natural language response.
         
@@ -77,6 +82,9 @@ class LLMService:
         Returns:
             Natural language response string
         """
+        model_to_use = model_name if model_name else self.default_model
+        print("Using Model", model_to_use)
+
         # Format result for LLM
         if result is None:
             formatted_result = "No data found"
@@ -99,7 +107,7 @@ class LLMService:
             response = await client.post(
                 self.url,
                 json={
-                    "model": self.chat_model,
+                    "model": model_to_use,
                     "prompt": prompt,
                     "stream": False
                 },
@@ -131,15 +139,16 @@ class LLMService:
             
             return response_text
         
-    async def generate_chat_response(self, question: str) -> str:
+    async def generate_chat_response(self, question: str, model_name: str = None) -> str:
         """
             Handle general chat questions (non-database related).
         """
+        model_to_use = model_name if model_name else self.default_model
         async with httpx.AsyncClient(timeout=self.timeout) as client:
             response = await client.post(
                 self.url,
                 json={
-                    "model": self.chat_model,
+                    "model": model_to_use,
                     "prompt": question,
                     "stream": False
                 },
@@ -150,31 +159,6 @@ class LLMService:
             return "Sorry, I couldn't process that."
 
         return data["response"].strip()
-    
-    # Chosing between query and chat model based on question content
 
-    def classify_question(self, question: str) -> str:
-        data_keywords = [
-            "how many",
-            "count",
-            "number of",
-            "average",
-            "maximum",
-            "minimum",
-            "marks",
-            "students in",
-            "class",
-            "section"
-        ]
-
-        question_lower = question.lower()
-
-        for keyword in data_keywords:
-            if keyword in question_lower:
-                print("CLASSIFIED AS QUERY")
-                return "query"
-                
-        print("CLASSIFIED AS CHAT")
-        return "chat"
 # Create singleton instance
 llm_service = LLMService()

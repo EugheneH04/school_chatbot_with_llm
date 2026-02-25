@@ -8,6 +8,7 @@ from typing import Optional, List, Dict, Any
 class QuestionRequest(BaseModel):
     """Request model for asking questions"""
     question: str
+    model: str
     
     class Config:
         json_schema_extra = {

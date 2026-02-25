@@ -64,21 +64,7 @@ async def ask_question(request: QuestionRequest):
         QuestionResponse with natural language answer and debug info
     """
     print(f"Question: {request.question}")
-
-    # NEW STEP: Classify question type
-    question_type = llm_service.classify_question(request.question)
-
-    if question_type == "chat":
-        chat_response = await llm_service.generate_chat_response(
-            request.question
-        )
-
-        return QuestionResponse(
-            response=chat_response,
-            structured_query=None,
-            raw_result=None
-        )
-
+    print(f"Selected Model: {request.model}")
     
     # Pre-step: Check for ambiguous names directly from the data
     potential_name = extract_potential_full_name(request.question)
@@ -111,7 +97,7 @@ async def ask_question(request: QuestionRequest):
             )
             
     # Step 1: Get structured query from LLM
-    structured_query = await llm_service.get_structured_query(request.question)
+    structured_query = await llm_service.get_structured_query(request.question,model_name=request.model)
     print(f"Structured Query: {json.dumps(structured_query, indent=2)}")
 
     # Check for clarification query type
@@ -128,7 +114,7 @@ async def ask_question(request: QuestionRequest):
         natural_response = f"{clarification_question}\n\nOptions:\n{options_str}"
         
         return QuestionResponse(
-            response=natural_response,
+            response=natural_response, 
             structured_query=structured_query,
             raw_result=None # No raw result for clarification
         )
@@ -140,7 +126,8 @@ async def ask_question(request: QuestionRequest):
     # Step 3: Generate natural language response
     natural_response = await llm_service.generate_natural_response(
         request.question, 
-        result
+        result,
+        model_name=request.model
     )
     print(f"Natural Response: {natural_response}")
     

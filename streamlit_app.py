@@ -6,22 +6,48 @@ API_URL = "http://127.0.0.1:8000/api/v1/ask"
 
 st.set_page_config(page_title="School System AI", layout="centered")
 
-st.title("School System AI Chatbot")
+st.title("🎓 School System AI Chatbot")
 
-# User input
-question = st.text_input("Ask your question:")
+# --- Input Row (Question + Model + Button) ---
+col1, col2, col3 = st.columns([5, 2, 1])
 
-if st.button("Submit"):
+with col1:
+    question = st.text_input(
+        "Ask your question:",
+        label_visibility="collapsed",
+        placeholder="Ask your question..."
+    )
+
+with col2:
+    model_option = st.selectbox(
+        "Model",
+        [
+        "llama3.1:8b",
+        "qwen2.5:1.5b",
+        "qwen2.5-coder:3b"
+        ],
+
+        label_visibility="collapsed"
+    )
+
+with col3:
+    submit = st.button("Ask")
+
+# --- When Ask is clicked ---
+if submit:
 
     if question.strip() == "":
         st.warning("Please enter a question.")
     else:
-        with st.spinner("Thinking..."):
+        with st.spinner(f"Running on {model_option.upper()} model..."):
 
             try:
                 response = requests.post(
                     API_URL,
-                    json={"question": question}
+                    json={
+                        "question": question,
+                        "model": model_option   
+                    }
                 )
 
                 if response.status_code == 200:
@@ -29,11 +55,13 @@ if st.button("Submit"):
 
                     st.success("Response received ✅")
 
-                    st.write("### 📊 Result:")
+                    st.write("### 💬 Answer:")
                     st.write(data.get("response"))
 
-                    st.write("### 📌 Structured Query:")
-                    st.json(data.get("structured_query"))
+                    # Show structured query only if exists
+                    if data.get("structured_query"):
+                        st.write("### 📊 Structured Query:")
+                        st.json(data.get("structured_query"))
 
                 else:
                     st.error(f"API Error: {response.status_code}")
