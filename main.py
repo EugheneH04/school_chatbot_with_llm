@@ -7,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from routes import router
 from config import settings
+from routes.file_routes import router as file_router
+
 
 # Create FastAPI app
 app = FastAPI(
@@ -26,6 +28,8 @@ app.add_middleware(
 
 # Include routes
 app.include_router(router, prefix="/api/v1", tags=["queries"])
+# Include file upload routes
+app.include_router(file_router, prefix="/api/v1/files", tags=["file upload"])
 
 # Load DataFrame at startup
 @app.on_event("startup")

@@ -172,8 +172,12 @@ class QueryExecutor:
         results = {}
         
         for agg_spec in aggregations:
-            func = agg_spec["function"]
+            func = agg_spec.get("function") or agg_spec.get("operation")
             col = agg_spec["column"]
+
+            if not func:
+                raise ValueError("Aggregation function not specified")
+
             alias = agg_spec.get("alias", f"{func}_{col}")
             print(f"  Applying aggregation: {func} on {col} as {alias}")
             

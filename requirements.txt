@@ -6,5 +6,13 @@ requests
 pandas
 numpy
 streamlit
-openpyxl
+openpyxl  
 pypdf
+ollama
+langchain
+langchain-community
+langchain-experimental
+langchain-ollama
+faiss-cpu
+python-dotenv
+python-multipart

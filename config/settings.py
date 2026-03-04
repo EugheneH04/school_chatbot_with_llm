@@ -17,6 +17,7 @@ class Settings:
         "Qwen 2.5": "qwen2.5:1.5b",
         "Qwen Coder": "qwen2.5-coder:3b",
         "Llama 3.1": "llama3.1:8b",
+        "Qwen 2.5 Large": "qwen2.5:7b"
     }
     # Default model for query planning and response generation
     DEFAULT_MODEL = "qwen2.5:1.5b"
@@ -37,13 +38,23 @@ class Settings:
     
     # Load DataFrame once at startup
     _df = None
-    
+    _pdf_chain = None
+
     @classmethod
     def get_dataframe(cls) -> pd.DataFrame:
         """Get the cached DataFrame (loads once)"""
         if cls._df is None:
             cls._df = pd.read_csv(cls.CSV_FILE_PATH)
         return cls._df
+    
+        # Method to set PDF chain instance
+    @classmethod
+    def set_pdf_chain(cls, chain):
+        cls._pdf_chain = chain
+        
+    @classmethod
+    def get_pdf_chain(cls):
+        return cls._pdf_chain
 
 # Create singleton instance
 settings = Settings()
