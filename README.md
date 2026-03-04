@@ -177,16 +177,3 @@ This project is for educational and research purposes.
 
 ---
 
-# 🔥 Optional (Better Version)
-
-If you want, I can also:
-
-* Make it more professional for recruiters
-* Add architecture diagram
-* Add API request/response examples
-* Add deployment instructions (Render / AWS / GCP)
-* Make it enterprise-level documentation
-
-Tell me where you're planning to showcase this (GitHub portfolio / resume / client demo) 🚀
-
-
