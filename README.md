@@ -1,10 +1,3 @@
-﻿# school_chatbot_with_llm
-Perfect 🔥 Midhun — here’s a clean, professional `README.md` for your **School Chatbot with LLM** project.
-
-You can copy this into your `README.md` file.
-
----
-
 # 📚 School Chatbot with Local LLM
 
 An AI-powered school management chatbot built using **FastAPI**, **Local LLM (Ollama)**, and intelligent query processing.
@@ -195,4 +188,5 @@ If you want, I can also:
 * Make it enterprise-level documentation
 
 Tell me where you're planning to showcase this (GitHub portfolio / resume / client demo) 🚀
+
 
