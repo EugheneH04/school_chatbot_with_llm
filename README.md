@@ -1,179 +1,108 @@
-# 📚 School Chatbot with Local LLM
+# school_chatbot_with_llm
 
-An AI-powered school management chatbot built using **FastAPI**, **Local LLM (Ollama)**, and intelligent query processing.
-
-This chatbot can:
-
-* Answer student-related queries
-* Process uploaded PDF documents (RAG)
-* Execute structured data queries
-* Switch between different LLM models
-* Handle real-time conversational queries
+AI-powered School Management Chatbot built using FastAPI and Local LLM (Ollama).
 
 ---
 
-## 🚀 Features
+## 🚀 Overview
 
-* 🔹 FastAPI backend
-* 🔹 Local LLM integration (Ollama)
-* 🔹 Multi-model support
-* 🔹 PDF Question Answering (RAG)
-* 🔹 Structured query execution
-* 🔹 Modular architecture
-* 🔹 REST API endpoints
+This project is a backend chatbot system designed for school data interaction and document-based question answering.
+
+It integrates:
+- FastAPI for backend API
+- Ollama for running local LLMs
+- RAG (Retrieval Augmented Generation) for PDF question answering
+- Structured query execution for student-related data queries
 
 ---
 
-## 🏗️ Project Structure
+## 🧠 Features
 
-```
+- FastAPI REST API
+- Local LLM integration (Llama / Qwen models)
+- Multi-model selection support
+- PDF upload and question answering (RAG)
+- Structured student data queries
+- Modular service-based architecture
+
+---
+
+## 📁 Project Structure
+
 backend-school-chatbot-local-llm/
 │
-├── main.py
-├── config.py
-├── models.py
-├── routes/
-│   ├── file_routes.py
-│   └── api_routes.py
-├── services/
-│   ├── llm_service.py
-│   ├── pdf_rag_service.py
-│   └── query_executor.py
-├── requirements.txt
-└── README.md
-```
-
----
-
-## 🧠 How It Works
-
-1. User sends a question via API
-2. System classifies the query
-3. Based on query type:
-
-   * Structured query → executed via query executor
-   * Document query → processed using RAG
-   * General query → sent to LLM
-4. LLM generates contextual response
+├── main.py  
+├── config.py  
+├── models.py  
+├── routes/  
+│   ├── api_routes.py  
+│   └── file_routes.py  
+├── services/  
+│   ├── llm_service.py  
+│   ├── pdf_rag_service.py  
+│   └── query_executor.py  
+├── requirements.txt  
+└── README.md  
 
 ---
 
 ## ⚙️ Installation
 
-### 1️⃣ Clone Repository
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/EugheneH04/school_chatbot_with_llm.git
 cd school_chatbot_with_llm
-```
-
----
-
-### 2️⃣ Create Virtual Environment
-
+2. Create Virtual Environment
 Using venv:
 
-```bash
 python -m venv venv
 venv\Scripts\activate
-```
+Using conda:
 
-Or using conda:
-
-```bash
 conda create -n school-chatbot python=3.11
 conda activate school-chatbot
-```
-
----
-
-### 3️⃣ Install Dependencies
-
-```bash
+3. Install Dependencies
 pip install -r requirements.txt
-```
-
----
-
-### 4️⃣ Start FastAPI Server
-
-```bash
+▶️ Run the Application
 uvicorn main:app --reload
-```
+Application runs at:
 
-Server will run at:
-
-```
 http://127.0.0.1:8000
-```
 
----
+Swagger Docs:
 
-## 🤖 LLM Setup (Ollama)
+http://127.0.0.1:8000/docs
 
+🤖 LLM Setup (Ollama)
 Make sure Ollama is installed and running.
 
-Pull required model:
+Pull model:
 
-```bash
 ollama pull llama3.1:8b
-```
-
 or
 
-```bash
 ollama pull qwen2.5:7b
-```
-
----
-
-## 📂 API Endpoints
-
-### Upload File
-
-```
+📌 API Endpoints
+Upload PDF
 POST /api/v1/files/upload
-```
 
-### Ask Question
-
-```
+Ask Question
 POST /api/v1/ask
-```
 
----
+🔒 Environment Variables
+Create a .env file:
 
-## 🔒 Environment Variables
-
-Create `.env` file:
-
-```
 MODEL_NAME=llama3.1:8b
-```
 
----
+📈 Future Enhancements
+Authentication & Role Management
 
-## 🧪 Future Improvements
+Database Integration
 
-* Authentication system
-* Role-based access
-* Database integration
-* Cloud deployment
-* CI/CD pipeline
-* UI Dashboard
+Cloud Deployment
 
----
+UI Dashboard
 
-## 👨‍💻 Author
-
-**Midhun Suresh**
-Aspiring Data Analyst & AI Developer
-
----
-
-## 📜 License
-
-This project is for educational and research purposes.
-
----
+CI/CD Pipeline
 
